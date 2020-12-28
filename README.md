@@ -1,6 +1,6 @@
 # Deractyl - Another Compact Dactyl ManuForm Keyboard with a different thumb cluster
 
-This is a fork of [my original Compactyl fork] (https://github.com/dereknheiley/dactyl-manuform-tight/), of [the okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard)of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
+This is a fork of [my original Compactyl fork](https://github.com/dereknheiley/dactyl-manuform-tight/), of [the okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard)of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
 
 ## Goals
 - New thumb design to try and combine benefits of dactyl and dactyl manuform thumb clusters
@@ -9,8 +9,16 @@ This is a fork of [my original Compactyl fork] (https://github.com/dereknheiley/
 - Increase tenting angle & adjust minor things like screw inserts
 
 ![](deractyl.png)
+![](elite-c_trrs_reset_holder.png)
 
-## Generate OpenSCAD and STL models
+## Generate OpenSCAD and STL models short version
+* Make changes to `src/dactyl_keyboard/dactyl.clj`
+* Install `lein` and `OpenScad`
+* Ensure script is executable `chmod 744 ./create-models.sh`
+* run `./create-models.sh`
+* wait for new STL files to generate in `things/` folder
+
+## Generate OpenSCAD and STL models old long boring version
 
 * Run `lein repl`
 * In the repl run `(load-file "src/dactyl_keyboard/dactyl.clj")`

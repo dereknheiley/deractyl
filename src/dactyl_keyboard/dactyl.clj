@@ -34,20 +34,20 @@
 (def nrows 5)
 (def ncols 6)
 
-(def column-curvature (deg2rad 17))                         ; 15                        ; curvature of the columns
-(def row-curvature (deg2rad (if (> nrows 4) 2 4)))                             ; 5                   ; curvature of the rows
-(def centerrow (if (> nrows 4) 2.1 1.75))                              ; controls front-back tilt
+(def column-curvature (deg2rad 18))                         ; 15                        ; curvature of the columns
+(def row-curvature (deg2rad 2))                             ; 5                   ; curvature of the rows
+(def centerrow 2)                              ; controls front-back tilt
 (def centercol 3)                                           ; controls left-right tilt / tenting (higher number is more tenting)
-(def tenting-angle (deg2rad 18))                            ; or, change this for more precise tenting control
-(def column-style
-  (if (> nrows 5) :orthographic :standard))
+(def tenting-angle (deg2rad 30))                            ; or, change this for more precise tenting control
+(def column-style :standard)
 (defn column-offset [column] (cond
                                (= column 2) [0 2.8 -6.5]
                                (= column 3) [0 0 -0.5]
                                (>= column 4) [0 -16 6]
                                :else [0 0 0]))
 
-(def keyboard-z-offset (if (> nrows 4) 10.5 9))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
+
+(def keyboard-z-offset 20)                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
 (def extra-width 2)                                       ; extra space between the base of keys; original= 2
 (def extra-height 1.5)                                      ; original= 0.5
 
@@ -459,7 +459,8 @@
 ;; Thumbs ;;
 ;;;;;;;;;;;;
 
-(def thumb-offsets (if (> nrows 4) [8 -5 8] [9 -5 4]))
+
+(def thumb-offsets [12 -2 7])
 
 (def thumborigin
   (map + (key-position 1 cornerrow [(/ mount-width 2) (- (/ mount-height 2)) 0])
@@ -475,7 +476,7 @@ need to adjust for difference for thumb-z only"
                                        (- thumb-design-z plate-thickness) 
                                        0)) 
                             1.1))
-(def thumb-x-rotation-adjustment (if (> nrows 4) -12 -8))
+(def thumb-x-rotation-adjustment -12)
 (defn thumb-place [rot move shape]
   (->> shape
        
@@ -489,9 +490,9 @@ need to adjust for difference for thumb-z only"
        (translate move)))
 
 ; convexer
-(defn thumb-r-place [shape] (thumb-place [14 -40 10] [-15 -10 5] shape)) ; right
-(defn thumb-m-place [shape] (thumb-place [10 -23 20] [-33 -15 -6] shape)) ; middle
-(defn thumb-l-place [shape] (thumb-place [6 -5 35] [-52.5 -25.5 -11.5] shape)) ; left
+(defn thumb-r-place [shape] (thumb-place [-14 -10 10] [-15 -10 5] shape)) ; right
+(defn thumb-m-place [shape] (thumb-place [-14 -2 10] [-35 -13 2.5] shape)) ; middle
+(defn thumb-l-place [shape] (thumb-place [-14 0 10] [-53.5 -15.5 2] shape)) ; left
 
 (defn thumb-layout [shape]
   (union
@@ -706,12 +707,12 @@ need to adjust for difference for thumb-z only"
 
 
 (def screw-insert-bottom-offset 0)
-(def screw-insert-bc   (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-3.7 7 screw-insert-bottom-offset]))
-(def screw-insert-ml   (if (> nrows 4) [-8.5 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
-(def screw-insert-thmb (if (> nrows 4) [-27.5 -17.5 screw-insert-bottom-offset] [-7.5 -3.9 screw-insert-bottom-offset]))
-(def screw-insert-br   (if (> nrows 4) [23.5 6.5 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
-(def screw-insert-back (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-2.5 6.5 screw-insert-bottom-offset]))
-(def screw-insert-fc   (if (> nrows 4) [19.8 7 screw-insert-bottom-offset] [21 9 screw-insert-bottom-offset]))
+(def screw-insert-bc   [-1.5 6.5 screw-insert-bottom-offset])
+(def screw-insert-ml   [-8.3 -8 screw-insert-bottom-offset] )
+(def screw-insert-thmb [-27.5 -17.5 screw-insert-bottom-offset] )
+(def screw-insert-br   [19.5 6.5 screw-insert-bottom-offset] )
+(def screw-insert-back [-2.5 6.5 screw-insert-bottom-offset] )
+(def screw-insert-fc   [13.8 6.5 screw-insert-bottom-offset] )
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union (->> (screw-insert 2 0 bottom-radius top-radius height screw-insert-bc) (color RED)) ; top middle
          (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
@@ -739,90 +740,20 @@ need to adjust for difference for thumb-z only"
                            screw-insert-height
                          ))
 
-(def okke-right (import "../things/okke_right.stl"))
-(def okke-right-offset-coordinates (if (> nrows 4) [4 -17.5 2.8] 
-                                                   [4.7 0.3 4.2]))
-(def okke-right (if (> nrows 4) (->>  okke-right (translate okke-right-offset-coordinates)
-                                                 (rotate (deg2rad -12) [1 0 0])
-                                                 (rotate (deg2rad 2.75) [0 0 1]) )
-                                (translate okke-right-offset-coordinates okke-right))
-)
-
-(def usb-holder-scad
-  (let [usb-holder-x 30.6
-        usb-holder-y 38.8
-        usb-holder-z 8.2
-
-        usb-holder-center-x (/ usb-holder-x 2)
-        usb-holder-center-y (/ usb-holder-y 2)
-
-        usb-elite-c-x 18.7
-        usb-elite-c-y 33.1
-        usb-elite-c-side-cut 5
-        usb-holder-border 1.5
-
-        usb-holder-notch-xy usb-holder-border
-        usb-holder-notch-down (* 1.5 usb-holder-notch-xy)
-        usb-holder-notch-half (/ usb-holder-notch-xy 2)
-        usb-holder-notch (cube usb-holder-notch-xy usb-holder-notch-xy 99)
-       ]
-    (difference
-      (cube usb-holder-x usb-holder-y usb-holder-z)
-
-        ; misc cutouts, beware of magic numbers here
-        (union
-          (translate [(* (- usb-holder-center-x usb-holder-border) -1) 
-                      (* (- usb-holder-center-y (- usb-holder-center-y 4.5)) -1) 
-                      0]
-            (cube 3 (- usb-holder-y 4.5) 99))
-
-          (translate [(* (- usb-holder-center-x (/ 9.2 2)) -1) 
-                      (* (- usb-holder-center-y (- usb-holder-center-y (/ 16.6 2))) -1) 
-                      0]
-            (cube 9.2 (- usb-holder-y 16.6) 99))
-
-          (->> (cube usb-holder-x usb-holder-y usb-holder-z)
-               (translate [0 0 (/ usb-holder-z 1.5)])
-               (rotate (deg2rad 10) [1 0 0])
-          )
-
-        )
-
-        ; TRRS jack cutouts (moar magic numbers)
-        (translate [(* (- usb-holder-center-x (/ 6.2 2) 3) -1) 
-                    (* (- usb-holder-center-y (- usb-holder-y (/ 12.5 2) usb-holder-border)) -1) 
-                    1]
-          (cube 6.2 12.5 usb-holder-z))
-
-        ; TRRS hole cut
-        (->> (cylinder 2.5 99)
-             (rotate (deg2rad 90) [1 0 0])
-             (translate [(* (- usb-holder-center-x 6.2) -1) 
-                         0
-                         0])
-        )
-    )
-  )
-)
-
-(def usb-holder 
-                (mirror [-1 0 0]
-                    (import "../things/usb_holder.stl")
-                )
-)
-(def usb-holder-cutout-height 16.9)
+(def usb-holder (mirror [-1 0 0]
+                    (import "../things/usb_holder_w_reset.stl")))
+(def usb-holder-cutout-height 30.05)
 (def usb-holder-clearance 0.05)
 (def usb-holder-bottom-offset 0)
 
-(def usb-holder-offset-coordinates (if (> nrows 4) [-39 57.3 usb-holder-bottom-offset] 
-                                                   [-41.5 50.4 usb-holder-bottom-offset]))
+(def usb-holder-offset-coordinates [-34 55.6 usb-holder-bottom-offset])
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
   (translate [0 0 (/ usb-holder-bottom-offset 2)]
   (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
                   (offset usb-holder-clearance
                           (project usb-holder))))
-  )
+)
 
 (def model-right
   (difference
@@ -874,7 +805,6 @@ need to adjust for difference for thumb-z only"
             (debug key-space-below)
             (debug thumb-space-below)
             (debug usb-holder)
-            ;(debug okke-right)
             )
           (translate [0 0 -20] (cube 350 350 40)))))
 
@@ -899,6 +829,6 @@ need to adjust for difference for thumb-z only"
                 screw-cutouts-fillets)
   ))
 
-(spit "things/right-plate-cut.scad"
+(spit "things/right-bottom-plate.scad"
       (write-scad bottom-plate))
 
