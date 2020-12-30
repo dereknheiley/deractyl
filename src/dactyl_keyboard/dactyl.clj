@@ -71,6 +71,7 @@
 (def keyswitch-height 14)                                   ;; Was 14.1, then 14.25
 (def keyswitch-width 14)
 (def plate-thickness 5)
+(def use_hotswap true)
 (def keyswitch-below-plate (- 8 plate-thickness))           ; approx space needed below keyswitch
 
 (def retention-tab-thickness 1.5)
@@ -88,9 +89,10 @@
 (def holder-thickness    (/ (- holder-x keyswitch-width) 2))
 (def holder-y            (+ keyswitch-height (* holder-thickness 2)))
 (def swap-z              3)
-(def web-thickness (+ plate-thickness swap-z))
+(def web-thickness (if use_hotswap (+ plate-thickness swap-z) plate-thickness))
 (def north_facing true)
 (def LED-holder true)
+
 (def square-led-size     6)
 (def mirror-internals false) ; lazy way to re-generate left side with correct hotswap holder orientation
 
@@ -210,22 +212,22 @@
                        (translate [(+ (/ 1.5 2) (/ keyswitch-width 2))
                                    0
                                    (/ plate-thickness 2)]))
-        plate-half (union top-wall left-wall)
-        plate      (difference
-                     (union plate-half
-                         (->> plate-half
-                              (mirror [1 0 0])
-                              (mirror [0 1 0]))
-                         (if north_facing
-                             (->> hotswap-holder
-                                  (mirror [1 0 0])
-                                  (mirror [0 1 0])
-                             )
-                             hotswap-holder
-                         )
-                     )
-                     switch-teeth-cutout
-                   )
+        plate-half (difference (union top-wall left-wall) 
+                               switch-teeth-cutout)
+        plate (union plate-half
+                  (->> plate-half
+                       (mirror [1 0 0])
+                       (mirror [0 1 0]))
+                  (if use_hotswap 
+                      (if north_facing
+                          (->> hotswap-holder
+                               (mirror [1 0 0])
+                               (mirror [0 1 0])
+                          )
+                          hotswap-holder
+                      )
+                  )
+              )
        ]
     (->> (if mirror-internals
            (->> plate (mirror [1 0 0]))
@@ -746,7 +748,7 @@ need to adjust for difference for thumb-z only"
 (def usb-holder-clearance 0.05)
 (def usb-holder-bottom-offset 0)
 
-(def usb-holder-offset-coordinates [-34 55.6 usb-holder-bottom-offset])
+(def usb-holder-offset-coordinates (if use_hotswap [-34 55.6 usb-holder-bottom-offset] [-32.5 53.8 usb-holder-bottom-offset]))
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
   (translate [0 0 (/ usb-holder-bottom-offset 2)]
